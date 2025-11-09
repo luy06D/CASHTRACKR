@@ -10,7 +10,7 @@ async function connectDB() {
         console.log(colors.blue.bold('Conexion exitosa a la BD'));
         
     } catch (error) {
-        console.log(error);
+        console.log(colors.red.bold('Fallo la conexión a la BD'));
         
     }
     }
