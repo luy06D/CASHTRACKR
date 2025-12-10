@@ -1,11 +1,10 @@
 import { Router } from "express";
+import { BudgetController } from "../controllers/BudgetController";
 
 const router = Router()
 
-router.get('/', (req, res) => {
-    console.log("prueba de api rest ");
-    
-})
+router.get('/', BudgetController.getAll )
+router.post('/', BudgetController.create )
 
 
 
