@@ -1,4 +1,5 @@
-import { Response, Request } from "express";
+import { Response, Request, json } from "express";
+import Budget from "../models/Budget";
 
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
 export class BudgetController {
@@ -7,8 +8,33 @@ export class BudgetController {
         console.log("prueba de api rest ");
     }
 
-     static create = async (req: Request, res: Response) => {
+    static create = async (req: Request, res: Response) => {
+        try {
+            const budget = new Budget(req.body)
+            await budget.save()
+            res.status(201).json('Presupuesto registrado correctamente')
+        } catch (error) {
+            // console.log(error);
+            res.status(500).json({error: 'Hubo un error'})
+            
+
+
+        }
+
+    }
+
+    static getById = async (req: Request, res: Response) => {
         console.log("Prueba API POST ");
     }
+
+    static updateById = async (req: Request, res: Response) => {
+        console.log("Prueba API POST ");
+    }
+
+    static deleteById = async (req: Request, res: Response) => {
+        console.log("Prueba API POST ");
+    }
+
+
 
 }
