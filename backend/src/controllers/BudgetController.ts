@@ -5,7 +5,17 @@ import Budget from "../models/Budget";
 export class BudgetController {
 
     static getAll = async (req: Request, res: Response) => {
-        console.log("prueba de api rest ");
+        const budget = await Budget.findAll({
+            order: [
+                ['createAt', 'DESC']
+            ],
+
+            //TODO: luego filtrar por el usuario autenticado 
+        })
+
+
+
+        res.json(budget)
     }
 
     static create = async (req: Request, res: Response) => {
@@ -15,8 +25,8 @@ export class BudgetController {
             res.status(201).json('Presupuesto registrado correctamente')
         } catch (error) {
             // console.log(error);
-            res.status(500).json({error: 'Hubo un error'})
-            
+            res.status(500).json({ error: 'Hubo un error' })
+
 
 
         }
@@ -24,7 +34,25 @@ export class BudgetController {
     }
 
     static getById = async (req: Request, res: Response) => {
-        console.log("Prueba API POST ");
+
+        try {
+            const {id} =  req.params
+            const budget = await Budget.findByPk(id)
+            
+            if(!budget){
+                const error = new Error('Presupuesto no encontrado ')
+            return res.status
+                
+
+            }
+            
+
+        } catch (error) {
+            res.status(500).json({ error: 'Hubo un error' })
+            
+
+        }
+
     }
 
     static updateById = async (req: Request, res: Response) => {
