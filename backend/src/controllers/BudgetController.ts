@@ -13,8 +13,6 @@ export class BudgetController {
             //TODO: luego filtrar por el usuario autenticado 
         })
 
-
-
         res.json(budget)
     }
 
@@ -26,9 +24,6 @@ export class BudgetController {
         } catch (error) {
             // console.log(error);
             res.status(500).json({ error: 'Hubo un error' })
-
-
-
         }
 
     }
@@ -36,31 +31,57 @@ export class BudgetController {
     static getById = async (req: Request, res: Response) => {
 
         try {
-            const {id} =  req.params
-            const budget = await Budget.findByPk(id)
-            
-            if(!budget){
-                const error = new Error('Presupuesto no encontrado ')
-            return res.status
-                
+            const { id } = req.params
+            const budget = await Budget.findByPk(id) // filtrado por id
 
+            if (!budget) {
+                const error = new Error('Presupuesto no encontrado ')
+                return res.status(404).json({ error: error.message })
             }
-            
+            res.json(budget)
 
         } catch (error) {
             res.status(500).json({ error: 'Hubo un error' })
-            
 
         }
 
     }
 
     static updateById = async (req: Request, res: Response) => {
-        console.log("Prueba API POST ");
+        try {
+            const { id } = req.params
+            const budget = await Budget.findByPk(id) // filtrado por id
+
+            if (!budget) {
+                const error = new Error('Presupuesto no encontrado ')
+                return res.status(404).json({ error: error.message })
+            }
+
+            await budget.update(req.body)
+            res.json('Presupuesto actualizado correctamente')
+        } catch (error) {
+            res.status(500).json({ error: 'Hubo un error' })
+
+        }
+
     }
 
     static deleteById = async (req: Request, res: Response) => {
-        console.log("Prueba API POST ");
+        try {
+            const { id } = req.params
+            const budget = await Budget.findByPk(id) // filtrado por id
+
+            if (!budget) {
+                const error = new Error('Presupuesto no encontrado ')
+                return res.status(404).json({ error: error.message })
+            }
+            await budget.destroy()
+            res.json('Presupuesto eliminado correctamente')
+        } catch (error) {
+            res.status(500).json({ error: 'Hubo un error' })
+
+        }
+
     }
 
 
