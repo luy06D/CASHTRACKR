@@ -1,6 +1,15 @@
 import { Response, Request, json } from "express";
 import Budget from "../models/Budget";
 
+// Accediendo al Request para agregar una nueva propiedad
+declare global {
+    namespace Express {
+        interface Request {
+            budget?: Budget
+        }
+    }
+}
+
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
 export class BudgetController {
 
@@ -29,58 +38,18 @@ export class BudgetController {
     }
 
     static getById = async (req: Request, res: Response) => {
-
-        try {
-            const { id } = req.params
-            const budget = await Budget.findByPk(id) // filtrado por id
-
-            if (!budget) {
-                const error = new Error('Presupuesto no encontrado ')
-                return res.status(404).json({ error: error.message })
-            }
-            res.json(budget)
-
-        } catch (error) {
-            res.status(500).json({ error: 'Hubo un error' })
-
-        }
-
+        res.json(req.budget)
     }
 
     static updateById = async (req: Request, res: Response) => {
-        try {
-            const { id } = req.params
-            const budget = await Budget.findByPk(id) // filtrado por id
-
-            if (!budget) {
-                const error = new Error('Presupuesto no encontrado ')
-                return res.status(404).json({ error: error.message })
-            }
-
-            await budget.update(req.body)
-            res.json('Presupuesto actualizado correctamente')
-        } catch (error) {
-            res.status(500).json({ error: 'Hubo un error' })
-
-        }
+        await req.budget.update(req.body)
+        res.json('Presupuesto actualizado correctamente')
 
     }
 
     static deleteById = async (req: Request, res: Response) => {
-        try {
-            const { id } = req.params
-            const budget = await Budget.findByPk(id) // filtrado por id
-
-            if (!budget) {
-                const error = new Error('Presupuesto no encontrado ')
-                return res.status(404).json({ error: error.message })
-            }
-            await budget.destroy()
-            res.json('Presupuesto eliminado correctamente')
-        } catch (error) {
-            res.status(500).json({ error: 'Hubo un error' })
-
-        }
+        await req.budget.destroy()
+        res.json('Presupuesto eliminado correctamente')
 
     }
 
