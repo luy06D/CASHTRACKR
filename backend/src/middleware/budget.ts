@@ -3,6 +3,16 @@ import { param, validationResult, body} from 'express-validator'
 import Budget from '../models/Budget'
 
 
+// Se le asigna budget a los atributos del Request
+declare global {
+    namespace Express {
+        interface Request {
+            budget?: Budget
+        }
+    }
+}
+
+
 export const validateBudgetId = async (req: Request, res: Response, next: NextFunction) => {
 
     await param('budgetId').isInt().withMessage('ID no valido')

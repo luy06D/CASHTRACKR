@@ -3,13 +3,20 @@ import { BudgetController } from "../controllers/BudgetController";
 import { handleInputErrors } from "../middleware/validation";
 import { validateBudgetErrors, validateBudgetExist, validateBudgetId } from "../middleware/budget";
 import { ExpensesController } from "../controllers/ExpenseController";
-import { validateExpenseErrors } from "../middleware/expense";
+import { validateExpenseErrors, validateExpenseExist } from "../middleware/expense";
 
 const router = Router()
 
 // EJEECUTAR CADA QUE TENGAMOS UN ENDPOINT CON UN PARAMETRO budgetId
 router.param('budgetId', validateBudgetId)
 router.param('budgetId', validateBudgetExist)
+
+router.param('expenseId', validateBudgetId)
+router.param('expenseId', validateExpenseExist)
+
+
+
+/** ROUTES - BUDGET */
 
 router.get('/', BudgetController.getAll)
 
@@ -36,8 +43,15 @@ router.post('/:budgetId/expenses',
     ExpensesController.create)
 
 router.get('/:budgetId/expenses/:expenseId', ExpensesController.getById)
-router.put('/:budgetId/expenses/:expenseId', ExpensesController.updateById)
-router.delete('/:budgetId/expenses/:expenseId', ExpensesController.deleteById)
+
+router.put('/:budgetId/expenses/:expenseId', 
+    validateExpenseErrors,
+    handleInputErrors,
+    ExpensesController.updateById)
+
+router.delete('/:budgetId/expenses/:expenseId',
+    handleInputErrors,
+     ExpensesController.deleteById)
 
 
 

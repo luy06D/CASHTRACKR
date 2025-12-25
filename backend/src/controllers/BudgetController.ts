@@ -1,14 +1,9 @@
 import { Response, Request, json } from "express";
 import Budget from "../models/Budget";
+import Expense from "../models/Expense";
 
 // Accediendo al Request para agregar una nueva propiedad
-declare global {
-    namespace Express {
-        interface Request {
-            budget?: Budget
-        }
-    }
-}
+
 
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
 export class BudgetController {
@@ -38,7 +33,11 @@ export class BudgetController {
     }
 
     static getById = async (req: Request, res: Response) => {
-        res.json(req.budget)
+        const budget = await Budget.findByPk(req.budget.id, {
+            include: [Expense]
+        }); 
+        
+        res.json(budget)
     }
 
     static updateById = async (req: Request, res: Response) => {
