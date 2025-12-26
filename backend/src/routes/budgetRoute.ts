@@ -49,9 +49,7 @@ router.put('/:budgetId/expenses/:expenseId',
     handleInputErrors,
     ExpensesController.updateById)
 
-router.delete('/:budgetId/expenses/:expenseId',
-    handleInputErrors,
-     ExpensesController.deleteById)
+router.delete('/:budgetId/expenses/:expenseId', ExpensesController.deleteById)
 
 
 

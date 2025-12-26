@@ -2,8 +2,6 @@ import { Response, Request, json } from "express";
 import Budget from "../models/Budget";
 import Expense from "../models/Expense";
 
-// Accediendo al Request para agregar una nueva propiedad
-
 
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
 export class BudgetController {
