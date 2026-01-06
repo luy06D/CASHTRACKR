@@ -80,8 +80,34 @@ export class AuthController {
             return res.status(403).json({ error: error.message })
         }
 
-        const token =  generateJWT(user.id)
+        const token = generateJWT(user.id)
         res.json(token)
+
+    }
+
+    static forgotPassword = async (req: Request, res: Response) => {
+
+        const { email } = req.body
+
+        const user = await User.findOne({ where: { email } })
+
+        if (!user) {
+            const error = new Error('El email no encontrado')
+            return res.status(402).json({ error: error.message })
+        }
+
+        user.token = generateToken()
+        await user.save()
+
+        await AuthEmail.sendforgetPasswordConfirmation({
+            name : user.name,
+            email : user.email,
+            token : user.token
+        })
+
+
+        res.json("Revisa tu email")
+
 
     }
 }

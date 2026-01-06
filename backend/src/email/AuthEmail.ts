@@ -25,4 +25,23 @@ export class AuthEmail {
         
         
     }
+
+
+      static sendforgetPasswordConfirmation = async (user: EmailType) => {
+        const email = await transport.sendMail({
+            from : 'CashTrackr <admin@cashtrackr.com>',
+            to: user.email,
+            subject: 'CashTrackr - Has solicitado Reestablecer tu contraseña',
+            html: `<p>Hola_ ${user.name}, </p>
+                <p>Visita el siguiente enlace: </p>
+                <a href="#" >Reestablecer mi contraseña</a>
+                <p>e ingresa el codigo:<b>${user.token}</b></p>
+            
+            `
+        }) 
+
+        console.log(email);
+        
+        
+    }
 }
