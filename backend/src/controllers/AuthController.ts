@@ -4,6 +4,7 @@ import { comparePassword, hashPassword } from "../utils/auth";
 import { generateToken } from "../utils/token"
 import { AuthEmail } from "../email/AuthEmail";
 import { generateJWT } from "../utils/jwt";
+import { body } from "express-validator";
 
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
 export class AuthController {
@@ -100,9 +101,9 @@ export class AuthController {
         await user.save()
 
         await AuthEmail.sendforgetPasswordConfirmation({
-            name : user.name,
-            email : user.email,
-            token : user.token
+            name: user.name,
+            email: user.email,
+            token: user.token
         })
 
 
@@ -110,4 +111,47 @@ export class AuthController {
 
 
     }
+
+
+
+    static validateToken = async (req: Request, res: Response) => {
+        const { token } = req.body
+
+        const tokenExist = await User.findOne({ where: { token } })
+
+        if (!tokenExist) {
+            const error = new Error('Token no válido')
+            return res.status(403).json({ error: error.message })
+
+        }
+
+        res.json("Correo enviado....")
+    }
+
+
+    static resetPasswordWithToken = async (req: Request, res: Response) => {
+
+        const { token } = req.params
+        const { password } = req.body
+
+        const user = await User.findOne({ where: { token } })
+
+        if (!user) {
+            const error = new Error('Token no válido')
+            return res.status(403).json({ error: error.message })
+
+        }
+
+        user.password = await hashPassword(password)
+        user.token = null
+        user.save()
+
+
+        res.json("La contraseña se modifico correctamente")
+
+
+    }
+
+
+
 }
