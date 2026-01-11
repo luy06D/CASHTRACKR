@@ -4,7 +4,8 @@ import { comparePassword, hashPassword } from "../utils/auth";
 import { generateToken } from "../utils/token"
 import { AuthEmail } from "../email/AuthEmail";
 import { generateJWT } from "../utils/jwt";
-import { body } from "express-validator";
+import { authenticate } from "../middleware/auth";
+
 
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
 export class AuthController {
@@ -148,10 +149,11 @@ export class AuthController {
 
 
         res.json("La contraseña se modifico correctamente")
-
-
     }
 
+    static user = async (req: Request, res: Response) => {
+       res.json(req.user)
 
+    }
 
 }

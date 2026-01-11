@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { param, validationResult, body} from 'express-validator'
-import User from '../models/User'
+import {  body} from 'express-validator'
+
 
 
 export const validateUserErrors = async (req: Request, res: Response, next: NextFunction) => {
