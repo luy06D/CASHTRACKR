@@ -68,4 +68,15 @@ router.get('/user',
     AuthController.user
 )
 
+router.post('/update-password',
+    authenticate,
+    body('current_password')
+        .isLength({ min: 8 }).withMessage('El password debe tener como minimo 8 caracteres'),
+    body('password')
+        .isLength({ min: 8 }).withMessage('El password debe tener como minimo 8 caracteres'),
+
+    AuthController.updateCurrentUserPassword
+
+)
+
 export default router
