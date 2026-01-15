@@ -1,19 +1,22 @@
 import { Router } from "express";
 import { BudgetController } from "../controllers/BudgetController";
 import { handleInputErrors } from "../middleware/validation";
-import { validateBudgetErrors, validateBudgetExist, validateBudgetId } from "../middleware/budget";
+import { hasAccess, validateBudgetErrors, validateBudgetExist, validateBudgetId } from "../middleware/budget";
 import { ExpensesController } from "../controllers/ExpenseController";
 import { validateExpenseErrors, validateExpenseExist } from "../middleware/expense";
+import { authenticate } from "../middleware/auth";
 
 const router = Router()
+
+router.use(authenticate) // EL user tiene que autenticarse
 
 // EJEECUTAR CADA QUE TENGAMOS UN ENDPOINT CON UN PARAMETRO budgetId
 router.param('budgetId', validateBudgetId)
 router.param('budgetId', validateBudgetExist)
+router.param('budgetId', hasAccess)
 
 router.param('expenseId', validateBudgetId)
 router.param('expenseId', validateExpenseExist)
-
 
 
 /** ROUTES - BUDGET */

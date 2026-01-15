@@ -7,20 +7,31 @@ import Expense from "../models/Expense";
 export class BudgetController {
 
     static getAll = async (req: Request, res: Response) => {
-        const budget = await Budget.findAll({
-            order: [
-                ['createAt', 'DESC']
-            ],
+        try {
 
-            //TODO: luego filtrar por el usuario autenticado 
-        })
+            const budget = await Budget.findAll({
+                order: [
+                    ['createdAt', 'DESC']
+                ],
 
-        res.json(budget)
+                where: {
+                    userId: req.user.id
+                }
+            })
+
+            res.json(budget)
+
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+
+        }
+
     }
 
     static create = async (req: Request, res: Response) => {
         try {
             const budget = new Budget(req.body)
+            budget.userId = req.user.id // registra el id del usuario autenticado 
             await budget.save()
             res.status(201).json('Presupuesto registrado correctamente')
         } catch (error) {
@@ -33,8 +44,8 @@ export class BudgetController {
     static getById = async (req: Request, res: Response) => {
         const budget = await Budget.findByPk(req.budget.id, {
             include: [Expense]
-        }); 
-        
+        });
+
         res.json(budget)
     }
 

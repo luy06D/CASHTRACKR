@@ -56,3 +56,13 @@ export const validateBudgetErrors = async (req: Request, res: Response, next: Ne
     next()
 
 }
+
+
+export function hasAccess(req: Request, res:Response, next: NextFunction) {
+    if(req.budget.userId !== req.user.id){
+        const error = new Error('Acción no valida')
+        // 401 USUARIO NO ESTA AUTORIZADO...
+        res.status(401).json({error: error.message})
+    }
+    next()
+}
