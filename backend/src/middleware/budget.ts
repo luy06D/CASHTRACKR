@@ -28,7 +28,7 @@ export const validateBudgetId = async (req: Request, res: Response, next: NextFu
 
 export const validateBudgetExist = async (req: Request, res: Response, next: NextFunction) => {
     try {
-            const { budgetId } = req.params
+            const { budgetId } = req.params 
             const budget = await Budget.findByPk(budgetId) // filtrado por id
 
             if (!budget) {
