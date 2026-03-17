@@ -3,6 +3,7 @@ import { validateExpenseExist } from "../../../middleware/expense";
 import Expense from "../../../models/Expense";
 import { expenses } from "../../mocks/expenses";
 
+
 jest.mock('../../../models/Expense', () => ({
    findByPk: jest.fn(), 
 }))
@@ -54,3 +55,4 @@ describe('Expenses Middleware - validateExpenseExist', () => {
     })
 
 }) 
+
