@@ -66,8 +66,8 @@ export class AuthController {
         const user = await User.findOne({ where: { email } })
 
         if (!user) {
-            const error = new Error('El email no encontrado')
-            return res.status(402).json({ error: error.message })
+            const error = new Error('Usuario no encontrado')
+            return res.status(404).json({ error: error.message })
         }
 
         if (!user.confirmed) {
@@ -79,7 +79,7 @@ export class AuthController {
 
         if (!isPasswordCorrect) {
             const error = new Error('La contraseña ingresada es incorrecta')
-            return res.status(403).json({ error: error.message })
+            return res.status(401).json({ error: error.message })
         }
 
         const token = generateJWT(user.id)
