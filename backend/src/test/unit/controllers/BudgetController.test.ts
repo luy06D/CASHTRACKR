@@ -167,7 +167,6 @@ describe('BudgetController.getById', () => {
 
     beforeEach(() => {
         (Budget.findByPk as jest.Mock).mockImplementation((id) => {
-            console.log(id);
 
             const budget = budgets.filter(b => b.id === id)[0]
             return Promise.resolve(budget)

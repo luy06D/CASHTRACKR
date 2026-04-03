@@ -9,10 +9,10 @@ async function connectDB() {
     try {
         await db.authenticate() // Autenticarse con la DB
         db.sync()  // SYNC creara las tablas y las columnas en automatico  - una vez definido el modelo
-        console.log(colors.blue.bold('Conexion exitosa a la BD'));
+        // console.log(colors.blue.bold('Conexion exitosa a la BD'));
         
     } catch (error) {
-        console.log(colors.red.bold('Fallo la conexión a la BD'));
+        // console.log(colors.red.bold('Fallo la conexión a la BD'));
         
     }
     }
@@ -30,6 +30,10 @@ app.use(express.json())
 app.use('/api/budgets', router)
 app.use('/api/auth', authRoute )
 
+app.post('/', (req, res) => {
+    res.send("Hola estoy aqui ")
+})
 
 
+ 
 export default app
