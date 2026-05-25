@@ -1,7 +1,7 @@
-import express from 'express' 
+import express from 'express'
 import colors from 'colors'
 import morgan from 'morgan'
-import { db } from './config/db' 
+import { db } from './config/db'
 import router from './routes/budgetRoute'
 import authRoute from './routes/authRoute'
 
@@ -10,13 +10,17 @@ async function connectDB() {
         await db.authenticate() // Autenticarse con la DB
         db.sync()  // SYNC creara las tablas y las columnas en automatico  - una vez definido el modelo
         // console.log(colors.blue.bold('Conexion exitosa a la BD'));
-        
+
     } catch (error) {
         // console.log(colors.red.bold('Fallo la conexión a la BD'));
-        
+
     }
-    }
-connectDB()
+}
+
+if (process.env.NODE_ENV !== 'test') {
+    connectDB()
+}
+
 
 
 
@@ -28,12 +32,12 @@ app.use(morgan('dev'))
 app.use(express.json())
 
 app.use('/api/budgets', router)
-app.use('/api/auth', authRoute )
+app.use('/api/auth', authRoute)
 
 app.post('/', (req, res) => {
     res.send("Hola estoy aqui ")
 })
 
 
- 
+
 export default app

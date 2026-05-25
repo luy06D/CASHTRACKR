@@ -1,8 +1,14 @@
 import request from 'supertest'
 import server from '../../server'
 import { AuthController } from '../../controllers/AuthController'
+import { AuthEmail } from '../../email/AuthEmail'
 
-
+// mock de confirmationEmail
+jest.mock('../../email/AuthEmail', () => ({
+    AuthEmail: {
+        sendConfirmationEmail: jest.fn().mockResolvedValue(true)
+    }
+}))
 
 describe('Athentication -  Create Account', () => {
 
@@ -67,6 +73,7 @@ describe('Athentication -  Create Account', () => {
 
     })
 
+    // TODO: Optimizar las operaciones de la funcion CREATE-ACCOUNT --
     it('should return 201 status code', async () => {
 
         const data = {
@@ -78,15 +85,13 @@ describe('Athentication -  Create Account', () => {
         const response = await request(server)
             .post('/api/auth/create-account')
             .send(data)
-        const createAccountMock = jest.spyOn(AuthController, 'createAccount')
+
+        // const createAccountMock = jest.spyOn(AuthController, 'createAccount')
 
         expect(response.statusCode).toBe(201)
-        expect(response.body.errors).toHaveLength(1)
-
-        expect(response.body.errors[0].msg).toBe('Usuario registrado correctemente')
         expect(response.statusCode).not.toBe(400)
-        expect(response.body.errors).not.toHaveLength(2)
-        expect(createAccountMock).not.toHaveBeenCalled()
+        expect(response.body).not.toHaveProperty('errors')
+
 
     })
 

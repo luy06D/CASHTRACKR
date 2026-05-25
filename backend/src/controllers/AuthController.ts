@@ -4,7 +4,6 @@ import { comparePassword, hashPassword } from "../utils/auth";
 import { generateToken } from "../utils/token"
 import { AuthEmail } from "../email/AuthEmail";
 import { generateJWT } from "../utils/jwt";
-import { authenticate } from "../middleware/auth";
 
 
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
