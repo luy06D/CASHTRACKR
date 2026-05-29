@@ -10,7 +10,7 @@ jest.mock('../../email/AuthEmail', () => ({
     }
 }))
 
-describe('Athentication -  Create Account', () => {
+describe('Authentication -  Create Account', () => {
 
     it('should display validation errors when form is empty ', async () => {
 
@@ -95,7 +95,57 @@ describe('Athentication -  Create Account', () => {
 
     })
 
+    it('should return 409 conflict when a user is already registared', async () => {
+
+        const data = {
+            "name": "Luis",
+            "password": "12345678",
+            "email": "cusi@gmail.com"
+        }
+
+        const response = await request(server)
+            .post('/api/auth/create-account')
+            .send(data)
+
+        expect(response.statusCode).toBe(409)
+        expect(response.body).toHaveProperty('error')
+        expect(response.body.error).toBe('El usuario ya esta registrado')
+        expect(response.statusCode).not.toBe(400)
+        expect(response.statusCode).not.toBe(201)
+        expect(response.body).not.toHaveProperty('errors')
+
+
+    })
+
 
 
 
 }) 
+
+describe('Authentication - Account confirmation with token ', () => {
+
+    it('should display error if token is empty or token not valid', async () =>{
+        const response = await request(server)
+            .post('/api/auth/confirm-account')
+            .send({
+                "token": "not_valid"
+            })
+        
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty("errors")
+        expect(response.body.errors).toHaveLength(1)
+        expect(response.body.errors[0].msg).toBe("Token no válida")
+
+    })
+
+
+
+
+
+
+
+
+
+
+
+})
