@@ -120,23 +120,52 @@ describe('Authentication -  Create Account', () => {
 
 
 
-}) 
+})
 
 describe('Authentication - Account confirmation with token ', () => {
 
-    it('should display error if token is empty or token not valid', async () =>{
+    it('should display error if token is empty or token not valid', async () => {
         const response = await request(server)
             .post('/api/auth/confirm-account')
             .send({
                 "token": "not_valid"
             })
-        
+
         expect(response.status).toBe(400)
         expect(response.body).toHaveProperty("errors")
         expect(response.body.errors).toHaveLength(1)
         expect(response.body.errors[0].msg).toBe("Token no válida")
 
     })
+
+    it('should display error if token is empty or token', async () => {
+        const response = await request(server)
+            .post('/api/auth/confirm-account')
+            .send({
+                "token": "123456"
+            })
+
+        expect(response.status).toBe(401)
+        expect(response.body).toHaveProperty("error")
+        expect(response.body.error).toBe("Token no válido")
+
+    })
+
+
+    it('should confirm account with a valid token', async () => {
+
+        const token = globalThis.cashTrackerConfirmationToken
+        const response = await request(server)
+            .post('/api/auth/confirm-account')
+            .send({
+                "token": token
+            })
+
+        expect(response.status).toBe(200)
+        expect(response.body).toBe('Cuenta de usuario confirmada correctamente.')
+
+    })
+
 
 
 

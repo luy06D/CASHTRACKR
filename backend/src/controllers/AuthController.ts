@@ -4,6 +4,7 @@ import { comparePassword, hashPassword } from "../utils/auth";
 import { generateToken } from "../utils/token"
 import { AuthEmail } from "../email/AuthEmail";
 import { generateJWT } from "../utils/jwt";
+import { token } from "morgan";
 
 
 // CREAMOS LOS CONTROLADORES PARA CADA RUTA _ API REST
@@ -21,7 +22,12 @@ export class AuthController {
         try {
             const user = await User.create(req.body)
             user.password = await hashPassword(password)
-            user.token = generateToken()
+            const token = generateToken()
+            user.token = token
+
+            if(process.env.NODE_ENV !== 'production'){
+                globalThis.cashTrackerConfirmationToken = token
+            }
             await user.save()
 
             await AuthEmail.sendConfirmationEmail({
