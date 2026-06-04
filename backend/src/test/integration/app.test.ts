@@ -2,6 +2,9 @@ import request from 'supertest'
 import server from '../../server'
 import { AuthController } from '../../controllers/AuthController'
 import { AuthEmail } from '../../email/AuthEmail'
+import expectCookies, { reset } from 'supertest/lib/cookies'
+import User from '../../models/User'
+import { Mocks } from 'node-mocks-http'
 
 // mock de confirmationEmail
 jest.mock('../../email/AuthEmail', () => ({
@@ -118,8 +121,6 @@ describe('Authentication -  Create Account', () => {
     })
 
 
-
-
 })
 
 describe('Authentication - Account confirmation with token ', () => {
@@ -163,6 +164,99 @@ describe('Authentication - Account confirmation with token ', () => {
 
         expect(response.status).toBe(200)
         expect(response.body).toBe('Cuenta de usuario confirmada correctamente.')
+
+    })
+
+
+    describe('Authentication - Login', () => {
+        it('should display validation errors when the form is empty', async () => {
+            const response = await request(server)
+                .post('/api/auth/login')
+                .send({
+                    "email": '',
+                    "password": ''
+                })
+
+            const loginMock = jest.spyOn(AuthController, 'login')
+
+            expect(response.status).toBe(400)
+            expect(response.body).toHaveProperty('errors')
+            expect(response.body.errors).toHaveLength(2)
+            expect(response.body.errors).not.toHaveLength(1)
+            expect(loginMock).not.toHaveBeenCalled()
+
+        })
+
+        it('should return 400 bad request when the email is invalid ', async () => {
+            const response = await request(server)
+                .post('/api/auth/login')
+                .send({
+                    "email": "not_valid",
+                    "password": "12345678"
+                })
+
+            const loginMock = jest.spyOn(AuthController, 'login')
+
+            expect(response.status).toBe(400)
+            expect(response.status).not.toBe(200)
+            expect(response.body).toHaveProperty('errors')
+            expect(response.body.errors).toHaveLength(1)
+            expect(response.body.errors).not.toHaveLength(2)
+            expect(response.body.errors[0].msg).toBe('Email no válido')
+            expect(loginMock).not.toHaveBeenCalled()
+
+        })
+
+        it('should return 404 error  if the user is not found', async () => {
+            const response = await request(server)
+                .post('/api/auth/login')
+                .send({
+                    "email": "cusiluis@gmail.com",
+                    "password": "12345678"
+                })
+
+            const loginMock = jest.spyOn(AuthController, 'login')
+
+            expect(response.status).toBe(404)
+            expect(response.status).not.toBe(200)
+            expect(response.body).toHaveProperty('error')
+            expect(response.body.error).toBe('Usuario no encontrado')
+            expect(loginMock).not.toHaveBeenCalled()
+
+        })
+
+        it('should return 403 error  if the user account is not confirmed', async () => {
+
+            (jest.spyOn(User, 'findOne') as jest.Mock).mockResolvedValue({
+                id: 1,
+                confirmed: false, 
+                password: 12345678,
+                email: "usernotconfirmed@gmail.com"
+            })
+            const response = await request(server)
+                .post('/api/auth/login')
+                .send({
+                    "email": "usernotconfirmed@gmail.com",
+                    "password": "12345678"
+                })
+
+
+            expect(response.status).toBe(403)
+            expect(response.status).not.toBe(200)
+            expect(response.body).toHaveProperty('error')
+            expect(response.body.error).toBe('La cuenta no esta confirmada')
+
+        })
+
+
+
+
+
+
+
+
+
+
 
     })
 
