@@ -1,10 +1,8 @@
 import request from 'supertest'
 import server from '../../server'
 import { AuthController } from '../../controllers/AuthController'
-import { AuthEmail } from '../../email/AuthEmail'
-import expectCookies, { reset } from 'supertest/lib/cookies'
 import User from '../../models/User'
-import { Mocks } from 'node-mocks-http'
+import * as dataUtils from '../../utils/auth'
 
 // mock de confirmationEmail
 jest.mock('../../email/AuthEmail', () => ({
@@ -169,6 +167,13 @@ describe('Authentication - Account confirmation with token ', () => {
 
 
     describe('Authentication - Login', () => {
+        // Limpia todos los mocks 
+        beforeEach(() => {
+            jest.clearAllMocks();
+        })
+
+
+
         it('should display validation errors when the form is empty', async () => {
             const response = await request(server)
                 .post('/api/auth/login')
@@ -248,6 +253,58 @@ describe('Authentication - Account confirmation with token ', () => {
 
         })
 
+        
+        it('should return 403 error  if the user account is not confirmed 2.0', async () => {
+
+            const userData  =  {
+                name : "Fabri",
+                password : "12345678",
+                email: "emaildeprueba@gmail.com"
+            }
+            await request(server)
+                .post('/api/auth/create-account')
+                .send(userData)
+
+            const response = await request(server)
+                .post('/api/auth/login')
+                .send({
+                    "email": userData.email,
+                    "password": userData.password,
+                })
+
+
+            expect(response.status).toBe(403)
+            expect(response.status).not.toBe(200)
+            expect(response.body).toHaveProperty('error')
+            expect(response.body.error).toBe('La cuenta no esta confirmada')
+
+        })
+
+        
+        it('should return a 401 error if the password is correct', async () => {
+
+           const findOne =  (jest.spyOn(User, 'findOne') as jest.Mock).mockResolvedValue({
+                id: 1,
+                confirmed: true, 
+                password: 12345678,
+        //        email: "usernotconfirmed@gmail.com"
+            })
+
+           const comparePassword = jest.spyOn(dataUtils, 'comparePassword').mockResolvedValue(false)
+            const response = await request(server)
+                .post('/api/auth/login')
+                .send({
+                    "email": "usernotconfirmed@gmail.com",
+                    "password": "12345678"
+                })
+
+
+            expect(response.status).toBe(401)
+            expect(response.status).not.toBe(200)
+            expect(response.body).toHaveProperty('error')
+            expect(response.body.error).toBe('La contraseña ingresada es incorrecta')
+
+        })
 
 
 
