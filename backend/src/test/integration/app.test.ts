@@ -3,6 +3,7 @@ import server from '../../server'
 import { AuthController } from '../../controllers/AuthController'
 import User from '../../models/User'
 import * as dataUtils from '../../utils/auth'
+import * as dataJWT from '../../utils/jwt'
 
 // mock de confirmationEmail
 jest.mock('../../email/AuthEmail', () => ({
@@ -234,7 +235,7 @@ describe('Authentication - Account confirmation with token ', () => {
 
             (jest.spyOn(User, 'findOne') as jest.Mock).mockResolvedValue({
                 id: 1,
-                confirmed: false, 
+                confirmed: false,
                 password: 12345678,
                 email: "usernotconfirmed@gmail.com"
             })
@@ -253,12 +254,12 @@ describe('Authentication - Account confirmation with token ', () => {
 
         })
 
-        
+
         it('should return 403 error  if the user account is not confirmed 2.0', async () => {
 
-            const userData  =  {
-                name : "Fabri",
-                password : "12345678",
+            const userData = {
+                name: "Fabri",
+                password: "12345678",
                 email: "emaildeprueba@gmail.com"
             }
             await request(server)
@@ -280,17 +281,17 @@ describe('Authentication - Account confirmation with token ', () => {
 
         })
 
-        
+
         it('should return a 401 error if the password is correct', async () => {
 
-           const findOne =  (jest.spyOn(User, 'findOne') as jest.Mock).mockResolvedValue({
+            const findOne = (jest.spyOn(User, 'findOne') as jest.Mock).mockResolvedValue({
                 id: 1,
-                confirmed: true, 
+                confirmed: true,
                 password: 12345678,
-        //        email: "usernotconfirmed@gmail.com"
+                //        email: "usernotconfirmed@gmail.com"
             })
 
-           const comparePassword = jest.spyOn(dataUtils, 'comparePassword').mockResolvedValue(false)
+            const comparePassword = jest.spyOn(dataUtils, 'comparePassword').mockResolvedValue(false)
             const response = await request(server)
                 .post('/api/auth/login')
                 .send({
@@ -303,6 +304,45 @@ describe('Authentication - Account confirmation with token ', () => {
             expect(response.status).not.toBe(200)
             expect(response.body).toHaveProperty('error')
             expect(response.body.error).toBe('La contraseña ingresada es incorrecta')
+            expect(findOne).toHaveBeenCalledTimes(1)
+            expect(comparePassword).toHaveBeenCalledTimes(1)
+
+
+        })
+
+        it('should return a JWT', async () => {
+
+            const findOne = (jest.spyOn(User, 'findOne') as jest.Mock).mockResolvedValue({
+                id: 1,
+                confirmed: true,
+                password: "hashedPassword",
+                //        email: "usernotconfirmed@gmail.com"
+            })
+
+            const comparePassword = jest.spyOn(dataUtils, 'comparePassword').mockResolvedValue(true);
+            const generateJWT = jest.spyOn(dataJWT, 'generateJWT').mockReturnValue('jwt_token');
+
+            const response = await request(server)
+                .post('/api/auth/login')
+                .send({
+                    "email": "usernotconfirmed@gmail.com",
+                    "password": "corretPassword"
+                })
+
+            expect(response.status).toBe(200)
+            expect(response.body).toEqual('jwt_token')
+
+            expect(findOne).toHaveBeenCalled()
+            expect(findOne).toHaveBeenCalledTimes(1)
+
+            expect(comparePassword).toHaveBeenCalled()
+            expect(comparePassword).toHaveBeenCalledTimes(1)
+            expect(comparePassword).toHaveBeenCalledWith('corretPassword','hashedPassword')
+
+            expect(generateJWT).toHaveBeenCalled()
+            expect(generateJWT).toHaveBeenCalledTimes(1)
+            expect(generateJWT).toHaveBeenCalledWith(1) //User id = 1
+
 
         })
 
