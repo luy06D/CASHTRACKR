@@ -66,10 +66,10 @@ export class AuthController {
 
     static login = async (req: Request, res: Response) => {
 
-        const { email, password } = req.body
+        const { email, password } = req.body 
 
         const user = await User.findOne({ where: { email } })
-
+        
         if (!user) {
             const error = new Error('Usuario no encontrado')
             return res.status(404).json({ error: error.message })
