@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { param, validationResult, body} from 'express-validator'
+import { param, validationResult, body } from 'express-validator'
 import Budget from '../models/Budget'
 
 
@@ -15,8 +15,10 @@ declare global {
 
 export const validateBudgetId = async (req: Request, res: Response, next: NextFunction) => {
 
-    await param('budgetId').isInt().withMessage('ID no valido')
-        .custom(value => value > 0).withMessage('ID no valido').run(req)
+    await param('budgetId')
+        .isInt().withMessage('ID no valido').bail() // bail = si el primer error se ejecuta se detienen los demas
+        .custom(value => value > 0).withMessage('ID no valido').bail()
+        .run(req)
 
     let errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -28,41 +30,41 @@ export const validateBudgetId = async (req: Request, res: Response, next: NextFu
 
 export const validateBudgetExist = async (req: Request, res: Response, next: NextFunction) => {
     try {
-            const { budgetId } = req.params 
-            const budget = await Budget.findByPk(budgetId) // filtrado por id
+        const { budgetId } = req.params
+        const budget = await Budget.findByPk(budgetId) // filtrado por id
 
-            if (!budget) {
-                const error = new Error('Presupuesto no encontrado')
-                return res.status(404).json({ error: error.message })
-            }
-            req.budget = budget
-            next()
-
-        } catch (error) {
-            res.status(500).json({ error: 'Hubo un error' })
-
+        if (!budget) {
+            const error = new Error('Presupuesto no encontrado')
+            return res.status(404).json({ error: error.message })
         }
-   
+        req.budget = budget
+        next()
+
+    } catch (error) {
+        res.status(500).json({ error: 'Hubo un error' })
+
+    }
+
 }
 
 export const validateBudgetErrors = async (req: Request, res: Response, next: NextFunction) => {
 
-   await body('name')
-            .notEmpty().withMessage('El nombre del presupuesto no puede ir vacio').run(req)
-   await body('amount')
-            .notEmpty().withMessage('El cantidad del presupuesto no puede ir vacio')
-            .isNumeric().withMessage('Ingrese numeros validos')
-            .custom(value => value > 0).withMessage('Ingrese numeros mayores a 0').run(req)
+    await body('name')
+        .notEmpty().withMessage('El nombre del presupuesto no puede ir vacio').run(req)
+    await body('amount')
+        .notEmpty().withMessage('El cantidad del presupuesto no puede ir vacio')
+        .isNumeric().withMessage('Ingrese numeros validos')
+        .custom(value => value > 0).withMessage('Ingrese numeros mayores a 0').run(req)
     next()
 
 }
 
 
-export function hasAccess(req: Request, res:Response, next: NextFunction) {
-    if(req.budget.userId !== req.user.id){
+export function hasAccess(req: Request, res: Response, next: NextFunction) {
+    if (req.budget.userId !== req.user.id) {
         const error = new Error('Acción no valida')
         // 401 USUARIO NO ESTA AUTORIZADO...
-        res.status(401).json({error: error.message})
+        res.status(401).json({ error: error.message })
     }
     next()
 }
