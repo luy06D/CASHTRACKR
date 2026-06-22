@@ -1,4 +1,5 @@
 import Logo from "@/components/ui/Logo";
+import TostifyNotificacion from "@/components/ui/TostifyNotification";
 
 
 export default function AuthLayout({
@@ -23,6 +24,8 @@ export default function AuthLayout({
                     </div>
                 </div>
             </div>
+
+            <TostifyNotificacion/>
         </>
     );
 }
