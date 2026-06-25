@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 
 
 export default function RegisterPage() {
+
+    
     return (
         <>
             <h1 className="text-6xl font-black text-purple-950">Iniciar Sesión</h1>

@@ -16,11 +16,31 @@ export const RegisterSchema =  z.object({
     path: ['password_confirmation']
 })
 
+export const LoginSchema = z.object({
+        email: z.string()
+                .min(1, {message: 'El Email es Obligatorio'})
+                .email( {message: 'Email no válido'}),
+        password: z.string()
+                .min(1, {message: 'El Password no puede ir vacio'})
+})
+
+
+
+
+
+export const TokenSchema = z.string({message: "Token no valido"} )
+                            .length(6, {message: "Token no valido"})
+
+                            
 export const SuccessSchema = z.string()
 export const ErrorResponseSchema = z.object({
     error: z.string()
 })
 
+export const UserSchema = z.object({
+        id: z.number(),
+        name: z.string(),
+        email: z.string().email()
+})
 
-export const TokenSchema = z.string({message: "Token no valido"} )
-                            .length(6, {message: "Token no valido"})
+export type User = z.infer<typeof UserSchema>
