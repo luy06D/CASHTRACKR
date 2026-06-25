@@ -1,10 +1,11 @@
+import "server-only"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { UserSchema } from "../schemas"
 import { cache } from "react"
 
 
-
+// Verificamos si la sesion esta iniciada 
 export const verifySession = cache( async () => {
     const token = cookies().get('CASHTRAKER_TOKEN')?.value
 
