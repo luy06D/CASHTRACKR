@@ -37,7 +37,7 @@ export class AuthController {
 
             })
             
-            res.status(201).json('Usuario registrado correctemente')
+            res.status(201).json('Usuario registrado correctamente')
         } catch (error) {
             res.status(500).json({ error: 'Hubo un error' })
         }
