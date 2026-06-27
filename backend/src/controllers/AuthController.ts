@@ -131,7 +131,7 @@ export class AuthController {
 
         }
 
-        res.json("Correo enviado....")
+        res.json("Token válido, asigna un nuevo password")
     }
 
 
