@@ -24,6 +24,12 @@ export const LoginSchema = z.object({
                 .min(1, {message: 'El Password no puede ir vacio'})
 })
 
+export const ForgotPasswordSchema = z.object({
+        email: z.string()   
+                .min(1, {message: 'El Email es Obligatorio'})
+                .email( {message: 'Email no válido'}),
+    })
+
 
 
 

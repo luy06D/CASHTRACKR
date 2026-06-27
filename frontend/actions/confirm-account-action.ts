@@ -8,8 +8,6 @@ type ActionStateType =  {
 }
 
 export async function ConfirmAccount (token : string,  prevState: ActionStateType) {
-    console.log("Prueba de confirmAccount")
-    console.log(token)
 
     const confirmToken = TokenSchema.safeParse(token)
 
