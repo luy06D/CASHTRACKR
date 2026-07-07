@@ -1,4 +1,5 @@
 import BudgetMenu from "@/components/Budget/BudgetMenu";
+import DeleteBudgetModal from "@/components/Budget/DeleteBudgetModal";
 import getToken from "@/src/auth/token";
 import { BudgetAPIResponseSchema, BudgetsAPIResponseSchema } from "@/src/schemas";
 import { formatCurrency, formatDate } from "@/src/util";
@@ -51,6 +52,7 @@ export default async function AdminPage() {
             </div>
 
             {budgets.length ? (
+                <>
                 <ul role="list" className="divide-y divide-gray-300 border shadow-lg mt-10 ">
                     {budgets.map((budget) => (
                         <li key={budget.id} className="flex justify-between gap-x-6 p-5 ">
@@ -82,6 +84,8 @@ export default async function AdminPage() {
                         </li>
                     ))}
                 </ul>
+                <DeleteBudgetModal/>
+                </>
             ) : (
                 <p className="text-center py-20">
                     No hay presupuesto aún {''}

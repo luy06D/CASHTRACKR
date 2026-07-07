@@ -6,6 +6,7 @@ import ErrorMessage from "../ui/ErrorMessage"
 import { useEffect } from "react"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import BudgetForms from "./BudgetForms"
 
 export default function CreateBudgetForm() {
   const router = useRouter()
@@ -32,34 +33,11 @@ export default function CreateBudgetForm() {
 
   return (
     <form
-      className="mt-10 space-y-3"
+      className="mt-4 space-y-3"
       noValidate
       action={dispatch}
     >
-      <div className="space-y-3">
-          <label htmlFor="name" className="text-sm uppercase font-bold">
-              Nombre Presupuesto
-          </label>
-          <input
-              id="name"
-              className="w-full p-3  border border-gray-100 bg-slate-100"
-              type="text"
-              placeholder="Nombre del Presupuesto"
-              name="name"
-          />
-      </div>
-      <div className="space-y-3">
-          <label htmlFor="amount" className="text-sm uppercase font-bold">
-              Cantidad Presupuesto
-          </label>
-          <input
-              type="number"
-              id="amount"
-              className="w-full p-3  border border-gray-100 bg-slate-100"
-              placeholder="Cantidad Presupuesto"
-              name="amount"
-          />
-      </div>
+      <BudgetForms/>
       {state.errors.map(error => <ErrorMessage>{error}</ErrorMessage>)}
       <input
         type="submit"
