@@ -1,10 +1,30 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { DialogTitle } from "@headlessui/react"
+import { useFormState } from "react-dom"
+import { confirmDeleteBudget } from "@/actions/delete-budget-action"
+import ErrorMessage from "../ui/ErrorMessage"
+import { useEffect } from "react"
+import { toast } from "react-toastify"
 
 export default function ConfirmPasswordForm() {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const budgetId = +searchParams.get('deleteBudgetId')!
+
+  const deleteBudgetWithPassword = confirmDeleteBudget.bind(null, budgetId)
+  const [state, dispatch] = useFormState(deleteBudgetWithPassword, {
+    errors : [],
+    success : ''
+  })
+
+  useEffect(() => {
+    if(state.success){
+      toast.success(state.success)
+      closeModal() 
+    }
+
+  }, [state])
 
   const closeModal = () => {
     const hideModal = new URLSearchParams(searchParams.toString())
@@ -27,6 +47,7 @@ export default function ConfirmPasswordForm() {
       <form
         className=" mt-14 space-y-5"
         noValidate
+        action={dispatch}
       >
         <div className="flex flex-col gap-5">
           <label
@@ -41,6 +62,7 @@ export default function ConfirmPasswordForm() {
             name='password'
           />
         </div>
+        {state.errors.map(error => <ErrorMessage key={error}>{error}</ErrorMessage>)}
         <div className="grid grid-cols-2 gap-5">
           <input
             type="submit"
