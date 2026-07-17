@@ -1,7 +1,8 @@
 "use server"
 
 import getToken from "@/src/auth/token"
-import { DraftBudgetSchema, ErrorResponseSchema, SuccessSchema } from "@/src/schemas"
+import {DraftExpenseSchema, ErrorResponseSchema, SuccessSchema } from "@/src/schemas"
+import { revalidatePath } from "next/cache"
 
 
 type ActionStateType = {
@@ -18,7 +19,7 @@ export async function CreateExpenses(idBudget: number , prevState : ActionStateT
     }
 
     // Validaciones Schema 
-    const createExpense = DraftBudgetSchema.safeParse(ExpensesData)
+    const createExpense = DraftExpenseSchema.safeParse(ExpensesData)
     if(!createExpense.success){
         const errors = createExpense.error.issues.map(issue => issue.message)
         return{
@@ -51,7 +52,8 @@ export async function CreateExpenses(idBudget: number , prevState : ActionStateT
             success : ''
         }
     }
-
+    // invalidar la caché de la ruta y generar con los datos más recientes. 
+    revalidatePath(`admin/budget/${idBudget}`)
     const success = SuccessSchema.parse(json)
     return{
         errors : [],

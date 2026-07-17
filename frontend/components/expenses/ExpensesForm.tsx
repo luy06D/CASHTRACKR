@@ -12,6 +12,7 @@ export default function ExpenseForm() {
                     type="text"
                     placeholder="Nombre del Gasto"
                     name="name"
+                    autoComplete="off"
                 />
             </div>
 

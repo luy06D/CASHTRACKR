@@ -46,13 +46,20 @@ export const ResetPasswordSchema = z.object({
 // BUDGETSS
 export const DraftBudgetSchema = z.object({
         name: z.string()
-                .min(1, {message: 'El Nombre del presupuesto es obligatorio'}),
+                .min(1, {message: 'El nombre del presupuesto es obligatorio'}),
         amount: z.coerce.
                 number({message: 'Cantidad no válida'})
                 .min(1, {message: 'Cantidad no válida'}),
 })
 
 export const PasswordValidationSchema = z.string().min(1, {message: 'Password no válido'})
+
+// Schema for Expenses
+export const DraftExpenseSchema = z.object({
+        name: z.string()
+                .min(1, {message: 'El nombre del gasto es obligatorio'}),
+        amount: z.coerce.number().min(1, {message: 'Cantidad no válida'})      
+})
 
 
 export const SuccessSchema = z.string()
@@ -66,16 +73,27 @@ export const UserSchema = z.object({
         email: z.string().email()
 })
 
+//Schema expenses - mostrar los gastos
+export const ExpensesAPIResponseSchema = z.object({
+        id: z.number(),
+        name: z.string(),
+        amount: z.string(),
+        createdAt: z.string(),
+        updatedAt: z.string(),
+        budgetId: z.number()
+})
+// Schema budgets - mostrar los presupuestos
 export const BudgetAPIResponseSchema = z.object({
         id: z.number(),
         name: z.string(),
         amount: z.string(),
         userId: z.number(),
         createdAt: z.string(),
-        updatedAt: z.string()
+        updatedAt: z.string(),
+        expense: z.array(ExpensesAPIResponseSchema)
 })
-
-export const BudgetsAPIResponseSchema = z.array(BudgetAPIResponseSchema)
+// omit => omite el campo expense de BudgetAPIResponseSchema
+export const BudgetsAPIResponseSchema = z.array(BudgetAPIResponseSchema.omit({expense:true}))
 
 export type User = z.infer<typeof UserSchema>
 export type Budget = z.infer<typeof BudgetAPIResponseSchema>

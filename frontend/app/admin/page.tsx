@@ -24,6 +24,7 @@ async function getUserBudgets() {
     })
 
     const json = await req.json()
+    console.log(json)
     const budgets = BudgetsAPIResponseSchema.parse(json)
     return budgets
 }

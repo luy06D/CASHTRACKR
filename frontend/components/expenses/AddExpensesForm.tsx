@@ -8,11 +8,10 @@ import ErrorMessage from "../ui/ErrorMessage";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+  
 
-export default function AddExpenseForm() {
+export default function AddExpenseForm({closeModal}: {closeModal: () => void}) {
     const params = useParams()
-    const router = useRouter()
 
     const CreateExpensesWithId = CreateExpenses.bind(null, +params.id)
     const [state, dispatch] = useFormState(CreateExpensesWithId, {
@@ -23,7 +22,8 @@ export default function AddExpenseForm() {
     useEffect(() => {
       if(state.success){
         toast.success(state.success)
-        router.push(`/admin/budget/${params.id}`)
+        closeModal()
+        //router.push(`/admin/budget/${params.id}`)
       }
     }, [state])
 
