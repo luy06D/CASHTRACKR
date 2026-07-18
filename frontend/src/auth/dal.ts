@@ -1,13 +1,13 @@
-import "server-only"
-import { cookies } from "next/headers"
+//import "server-only"
 import { redirect } from "next/navigation"
 import { UserSchema } from "../schemas"
 import { cache } from "react"
+import getToken from "./token"
 
 
 // Verificamos si la sesion esta iniciada 
 export const verifySession = cache( async () => {
-    const token = cookies().get('CASHTRAKER_TOKEN')?.value
+    const token = getToken()
 
     if(!token){
         redirect('/auth/login')
