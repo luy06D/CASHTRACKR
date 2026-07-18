@@ -1,4 +1,5 @@
 import AddExpenseButton from "@/components/expenses/AddExpenseButton"
+import ExpenseMenu from "@/components/expenses/ExpenseMenu"
 import ModalContainer from "@/components/ui/ModalContainer"
 import { getBudget } from "@/src/services/budgets"
 import { formatCurrency, formatDate } from "@/src/util"
@@ -41,7 +42,11 @@ export default async function BudgetsDetailsPage({ params }: { params: { id: str
                     </p>
                   </div>
                 </div>
+                <ExpenseMenu
+                  expenseId = {expenses.id}
+                />
               </li>
+              
             ))}
           </ul>
         </>
