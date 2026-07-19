@@ -25,7 +25,7 @@ export class AuthController {
             const token = generateToken()
             user.token = token
 
-            if(process.env.NODE_ENV !== 'production'){
+            if (process.env.NODE_ENV !== 'production') {
                 globalThis.cashTrackerConfirmationToken = token
             }
             await user.save()
@@ -36,7 +36,7 @@ export class AuthController {
                 token: user.token
 
             })
-            
+
             res.status(201).json('Usuario registrado correctamente')
         } catch (error) {
             res.status(500).json({ error: 'Hubo un error' })
@@ -66,10 +66,10 @@ export class AuthController {
 
     static login = async (req: Request, res: Response) => {
 
-        const { email, password } = req.body 
+        const { email, password } = req.body
 
         const user = await User.findOne({ where: { email } })
-        
+
         if (!user) {
             const error = new Error('Usuario no encontrado')
             return res.status(404).json({ error: error.message })
@@ -157,22 +157,22 @@ export class AuthController {
     }
 
     static user = async (req: Request, res: Response) => {
-       res.json(req.user)
+        res.json(req.user)
 
     }
 
 
     static updateCurrentUserPassword = async (req: Request, res: Response) => {
 
-        const {current_password, password} = req.body
-        const {id} = req.user
-        
+        const { current_password, password } = req.body
+        const { id } = req.user
+
         const user = await User.findByPk(id)
 
         const isPasswordCorrect = await comparePassword(current_password, user.password)
-        if(!isPasswordCorrect){
+        if (!isPasswordCorrect) {
             const error = new Error('El password actual es incorrecto')
-            return res.status(401).json({error: error.message})
+            return res.status(401).json({ error: error.message })
         }
 
         user.password = await hashPassword(password)
@@ -181,22 +181,49 @@ export class AuthController {
         res.json('El password se actualizo correctamente')
     }
 
-    
+
     static checkPassword = async (req: Request, res: Response) => {
 
-        const {password} = req.body
-        const {id} = req.user
-        
+        const { password } = req.body
+        const { id } = req.user
+
         const user = await User.findByPk(id)
 
         const isPasswordCorrect = await comparePassword(password, user.password)
-        if(!isPasswordCorrect){
+        if (!isPasswordCorrect) {
             const error = new Error('El password actual es incorrecto')
-            return res.status(401).json({error: error.message})
+            return res.status(401).json({ error: error.message })
         }
 
         res.json('Password correcto')
     }
+
+    // RETO: UPDATE USER - NOMBRE & EMAIL
+    static updateUser = async (req: Request, res: Response) => {
+        const { name, email } = req.body
+
+        const emailExist = await User.findOne({ where: { email } })
+
+        try {
+            if (emailExist && emailExist.id !== req.user.id) {
+                const error = Error('El usuario ya esta registrado')
+                return res.status(409).json({ error: error.message })
+            }
+
+            await User.update({email, name}, {
+                where: {id: req.user.id}
+            })
+            
+            res.json('Datos del usuario actualizado correctamente')
+
+        } catch (error) {
+            res.status(500).json({ error: 'Hubo un error' })
+
+        }
+
+
+    }
+
 
 
 }
