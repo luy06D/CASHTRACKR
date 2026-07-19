@@ -61,6 +61,16 @@ export const DraftExpenseSchema = z.object({
         amount: z.coerce.number().min(1, {message: 'Cantidad no válida'})      
 })
 
+// Validacion - Update Password
+export const UpdatePasswordSchema = z.object({
+        current_password: z.string().min(1, {message: 'El password no puede ir vacio'}),
+        password: z.string().min(8, {message: 'El nuevo Password debe ser de almenos 8 caracteres'}),
+        password_confirmation: z.string()
+}).refine((data) => data.password == data.password_confirmation, {
+        message: 'Los password no son iguales',
+        path: ["password_confirmation"]
+})
+
 
 export const SuccessSchema = z.string()
 export const ErrorResponseSchema = z.object({
